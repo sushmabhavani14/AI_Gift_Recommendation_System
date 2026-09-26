@@ -8,14 +8,14 @@
 <style>
 
 body {
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     margin: 0;
     padding: 30px;
 }
 
 .container {
-    width: 600px;
+    max-width: 750px;
     margin: auto;
     background-color: white;
     padding: 30px;
@@ -36,19 +36,21 @@ label {
 
 input, select {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
+    padding: 11px;
+    margin-top: 6px;
     box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
 
 button {
     width: 100%;
-    padding: 12px;
+    padding: 13px;
     margin-top: 20px;
     background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
 }
@@ -57,12 +59,37 @@ button:hover {
     background-color: #45a049;
 }
 
-.result {
-    margin-top: 25px;
-    padding: 20px;
-    background-color: #f5f5f5;
+.results {
+    margin-top: 30px;
+}
+
+.results h2 {
+    text-align: center;
+    color: #333;
+}
+
+.card {
+    background-color: #fafafa;
+    border: 1px solid #ddd;
     border-radius: 10px;
-    white-space: pre-wrap;
+    padding: 20px;
+    margin-top: 18px;
+    box-shadow: 0 2px 6px #ddd;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.card p {
+    line-height: 1.6;
 }
 
 </style>
@@ -83,7 +110,6 @@ button:hover {
 <label>Relationship</label>
 
 <select name="relationship">
-
 <option>Friend</option>
 <option>Father</option>
 <option>Mother</option>
@@ -91,20 +117,17 @@ button:hover {
 <option>Sister</option>
 <option>Partner</option>
 <option>Colleague</option>
-
 </select>
 
 <label>Occasion</label>
 
 <select name="occasion">
-
 <option>Birthday</option>
 <option>Anniversary</option>
 <option>Wedding</option>
 <option>Graduation</option>
 <option>Farewell</option>
 <option>Festival</option>
-
 </select>
 
 <label>Interests</label>
@@ -129,13 +152,34 @@ required>
 
 </form>
 
+
 {% if recommendations %}
 
-<div class="result">
+<div class="results">
 
 <h2>🎁 Recommended Gifts</h2>
 
-{{ recommendations }}
+{% for gift in recommendations %}
+
+<div class="card">
+
+<h3>{{ loop.index }}. {{ gift.name }}</h3>
+
+<p class="price">{{ gift.price }}</p>
+
+<p>
+<strong>Why it is suitable:</strong><br>
+{{ gift.why }}
+</p>
+
+<p>
+<strong>Description:</strong><br>
+{{ gift.description }}
+</p>
+
+</div>
+
+{% endfor %}
 
 </div>
 
