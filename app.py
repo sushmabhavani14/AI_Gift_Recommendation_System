@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 from google import genai
+from google.genai import types
 import os
+import json
 
 app = Flask(__name__)
 
@@ -11,7 +13,7 @@ client = genai.Client(
 @app.route("/", methods=["GET", "POST"])
 def home():
 
-    recommendations = ""
+    recommendations = []
 
     if request.method == "POST":
 
@@ -24,30 +26,46 @@ def home():
         prompt = f"""
 You are an AI Gift Recommendation Agent.
 
+User details:
 Age: {age}
 Relationship: {relationship}
 Occasion: {occasion}
 Interests: {interests}
 Budget: ₹{budget}
 
-Recommend 5 personalized gifts.
+Recommend exactly 5 personalized gifts.
 
-For each gift provide:
+IMPORTANT:
+- Keep every gift within the given budget.
+- Give realistic estimated prices in Indian Rupees.
+- Return ONLY valid JSON.
+- Do not use Markdown.
+- Do not use ###, **, bullets or ---.
 
-1. Gift name
-2. Estimated price
-3. Why it is suitable
-4. Short description
+Use exactly this JSON format:
 
-Keep all recommendations within the given budget.
+[
+  {{
+    "name": "Gift name",
+    "price": "₹1,500",
+    "why": "Short reason why this gift is suitable",
+    "description": "Short description of the gift"
+  }}
+]
 """
 
         response = client.models.generate_content(
-            model="gemini-3.5-flash",
-            contents=prompt
+            model="gemini-3.5-flash-lite",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
         )
 
-        recommendations = response.text
+        try:
+            recommendations = json.loads(response.text)
+        except:
+            recommendations = []
 
     return render_template(
         "index.html",
